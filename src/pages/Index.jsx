@@ -29,23 +29,19 @@ const Index = () => {
       const articleSummaries = articles.map((article) => article.description);
       const prompt = `Summarize the following news articles:\n\n${articleSummaries.join("\n\n")}`;
 
-      const openaiResponse = await fetch("https://api.openai.com/v1/engines/text-davinci-002/completions", {
+      const response = await fetch("/api/summarize", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          prompt: prompt,
-          max_tokens: 100,
-          n: 1,
-          stop: null,
-          temperature: 0.7,
+          apiKey: apiKey,
+          articles: articleSummaries,
         }),
       });
 
-      const openaiData = await openaiResponse.json();
-      setSummary(openaiData.choices[0].text.trim());
+      const data = await response.json();
+      setSummary(data.summary);
     } catch (error) {
       console.error("Error:", error);
       toast({
